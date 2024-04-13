@@ -71,6 +71,7 @@
             border-radius: 5px;
             resize: vertical;
         }
+        #accuracyDisplay { color: red; }
     </style>
 </head>
 <body>
@@ -84,14 +85,32 @@
         <input type="file" id="fileInput" accept=".mp3, .wav" style="display: none;">
         <div id="selectedFileName"></div>
 
+        <label for="textInputFile" class="custom-file-upload">Choose Text
+    File</label>
+        <input type="file" id="textInputFile" accept=".txt" style="display:
+            none;">
+            <div id="selectedTextFileName"></div>
+            <div id="accuracyDisplay">Accuracy: --%</div>
+
+
         <form id="textInputForm">
             <label for="textInput">Enter Text:</label>
             <textarea id="textInput" name="text" placeholder="Enter text here" rows="5" oninput="autoResize(this)"></textarea>
-            <button type="button" onclick="compareText()">Compare</button>
         </form>
     </div>
+    <!--<script type="module"> import fast-levenshtein from https://cdn.jsdelivr.net/npm/fast-levenshtein@3.0.0/+esm </script>-->
+    <!--<script type="module"> -->
+        <!--import levenshtein from 'https://cdn.jsdelivr.net/npm/fast-levenshtein@3.0.0/+esm' -->
+        <!--window.levenshtein = levenshtein-->
+    <!--</script>-->
+    <script src="dist/bundle.js"></script>
 
     <script>
+        window.uploadedText = -1;
+        function cleanString(input) {
+                // 使用正则表达式去除字符串中的换行符
+                return input.replace(/[\r\n]+/g, '');
+        }
         document.getElementById('fileInput').addEventListener('change', function() {
             var selectedFile = this.files[0];
             var selectedFileName = document.getElementById('selectedFileName');
@@ -107,14 +126,67 @@
             }
         });
 
+
+        document.getElementById('textInputFile').addEventListener('change', function() {
+            var file = this.files[0];
+            var selectedTextFileName = document.getElementById('selectedTextFileName');
+            selectedTextFileName.textContent = file ? `File: ${file.name}` : '';
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    window.uploadedText = e.target.result; // Store the content in a global variable
+                    window.uploadedText = cleanString(window.uploadedText);
+                    document.getElementById('accuracyDisplay').textContent = "Accuracy: --%";
+
+                };
+                reader.readAsText(file);
+            }
+        });
         function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        function compareText() {
-            // 这里可以添加文本比较的逻辑
-            alert('Implement comparison logic here.');
+        document.getElementById('textInput').addEventListener('input', function() {
+            <!--let levenshtein = require('fast-levenshtein');-->
+            if ( window.uploadedText == -1 ) {
+                document.getElementById('accuracyDisplay').textContent = "Please Upload Text File";
+                return;
+            }
+            let userInput = cleanString(this.value);
+            let accuracy = calculateMatchPercentage(window.uploadedText, userInput);
+            <!--let accuracy = window.levenshtein.get(window.uploadedText, userInput);-->
+            <!--let accuracy = calculateAccuracy(window.uploadedText, userInput);-->
+            document.getElementById('accuracyDisplay').textContent = `Accuracy: ${accuracy}%`;
+        });
+
+        function calculateMatchPercentage(s1, s2) {
+                var distance = window.levenshtein.get(s1, s2);
+                var maxLength = Math.max(s1.length, s2.length);
+                if (maxLength === 0) return 100; // 防止除以零
+                var percentage = (1 - distance / maxLength) * 100;
+                return Math.floor(percentage); // 直接截断小数部分
+        }
+    <!--function compareText() {-->
+        <!--var userInput = document.getElementById('textInput').value;-->
+        <!--if (!window.uploadedText) {-->
+                <!--alert('Please upload a text file first.');-->
+                <!--return;-->
+            <!--}-->
+            <!--var accuracy = calculateAccuracy(window.uploadedText, userInput);-->
+            <!--alert(`Accuracy: ${accuracy}%`);-->
+        <!--}-->
+
+        function calculateAccuracy(originalText, userInput) {
+            var totalCharacters = originalText.length;
+            var matchCount = 0;
+            for (var i = 0; i < userInput.length && i < originalText.length;
+i++) {
+                if (userInput[i] === originalText[i]) {
+                    matchCount++;
+                }
+            }
+            return (matchCount / totalCharacters * 100).toFixed(2);
         }
     </script>
 </body>
