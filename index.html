@@ -1,79 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,
+            initial-scale=1.0">
     <title>Audio Comparison</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: url('background.jpg'); /* 请根据实际情况替换背景图片路径 */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+        <style>
+            body {
+                        font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            background-image: url('background.jpg'); /*
+请根据实际情况替换背景图片路径 */
+                        background-size: cover;
+                            background-position: center;
+                            background-repeat: no-repeat;
+                            background-attachment: fixed;
+                        }
 
-        .container {
-            width: 80vw;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 40px 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
+                .container {
+                        display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            width: 80vw;
+                            max-width: 1200px;
+                            margin: 40px auto;
+                            padding: 40px 20px;
+                            background-color: rgba(255, 255, 255, 0.8);
+                            border-radius: 10px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                        }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
+                h1 {
+                        text-align: center;
+                            margin-bottom: 30px;
+                            color: #333;
+                        }
 
-        audio {
-            width: 100%;
-            margin-bottom: 20px;
-        }
+                audio {
+                        width: 100%;
+                            margin-bottom: 20px;
+                        }
 
-        .custom-file-upload {
-            border: 1px solid #ccc;
-            display: inline-block;
-            padding: 6px 12px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+                .custom-file-upload {
+                        border: 1px solid #ccc;
+                            display: inline-block;
+                            padding: 6px 12px;
+                            cursor: pointer;
+                            background-color: #007bff;
+                            color: white;
+                            border-radius: 5px;
+                            transition: background-color 0.3s;
+                            margin: 10px 0;
+                            width: auto; /* Adjust width to content */
+                        }
 
-        .custom-file-upload:hover {
-            background-color: #0056b3;
-        }
+                .custom-file-upload:hover {
+                        background-color: #0056b3;
+                        }
 
-        #selectedFileName {
-            text-align: center;
-            margin-top: 10px;
-        }
+                #selectedFileName, #selectedTextFileName {
+                        text-align: center;
+                            margin-top: 10px;
+                        }
 
-        label, input[type="text"], textarea, button {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 20px; /* 增加底部外边距 */
-        }
+                label, input[type="text"], textarea, button {
+                        width: 90%; /* Control width here */
+                            margin: 10px auto; /* Uniform margin for all form
+elements */
+                    }
 
-        textarea {
-            width: calc(100% - 40px); /* 考虑到内边距 */
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: vertical;
-        }
-        #accuracyDisplay { color: red; }
-    </style>
+                textarea {
+                        padding: 10px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            resize: vertical;
+                        }
+
+                #accuracyDisplay {
+                        color: red;
+                            margin-top: 10px;
+                        }
+
+                .file-input-wrapper {
+                        display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+                            width: 100%;
+                        }
+            </style>
+
 </head>
+
 <body>
     <div class="container">
         <h1>Audio Comparison</h1>
@@ -81,35 +101,35 @@
             <source src="" type="audio/mpeg" id="audioSource">
             Your browser does not support the audio element.
         </audio>
-        <label for="fileInput" class="custom-file-upload">Choose Audio</label>
-        <input type="file" id="fileInput" accept=".mp3, .wav" style="display: none;">
-        <div id="selectedFileName"></div>
 
-        <label for="textInputFile" class="custom-file-upload">Choose Text
-    File</label>
-        <input type="file" id="textInputFile" accept=".txt" style="display:
-            none;">
+        <div class="file-input-wrapper">
+            <label for="fileInput" class="custom-file-upload">Choose
+                Audio</label>
+            <input type="file" id="fileInput" accept=".mp3, .wav" style="display: none;">
+            <div id="selectedFileName"></div>
+        </div>
+
+        <div class="file-input-wrapper">
+            <label for="textInputFile" class="custom-file-upload">Choose Text
+                File</label>
+            <input type="file" id="textInputFile" accept=".txt" style="display:
+                none;">
             <div id="selectedTextFileName"></div>
-            <div id="accuracyDisplay">Accuracy: --%</div>
+        </div>
 
-
-        <form id="textInputForm">
-            <label for="textInput">Enter Text:</label>
-            <textarea id="textInput" name="text" placeholder="Enter text here" rows="5" oninput="autoResize(this)"></textarea>
-        </form>
+        <textarea id="textInput" name="text" placeholder="Enter text here" rows="5"
+            oninput="autoResize(this)"></textarea>
+        <div id="accuracyDisplay">Accuracy: --%</div>
     </div>
-    <!--<script type="module"> import fast-levenshtein from https://cdn.jsdelivr.net/npm/fast-levenshtein@3.0.0/+esm </script>-->
-    <!--<script type="module"> -->
-        <!--import levenshtein from 'https://cdn.jsdelivr.net/npm/fast-levenshtein@3.0.0/+esm' -->
-        <!--window.levenshtein = levenshtein-->
-    <!--</script>-->
     <script src="dist/bundle.js"></script>
 
     <script>
         window.uploadedText = -1;
         function cleanString(input) {
                 // 使用正则表达式去除字符串中的换行符
-                return input.replace(/[\r\n]+/g, '');
+                input = input.replace(/[\r\n]+/g, ' ');
+                // 简化多个连续空格为一个空格
+                return input.replace(/\s+/g, ' ');
         }
         document.getElementById('fileInput').addEventListener('change', function() {
             var selectedFile = this.files[0];
@@ -190,5 +210,5 @@ i++) {
         }
     </script>
 </body>
-</html>
 
+</html>
