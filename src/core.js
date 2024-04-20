@@ -1,19 +1,10 @@
-import levenshtein from 'fast-levenshtein';
-import diff_match_patch from "diff-match-patch"
-const dmp = new diff_match_patch();
-
-const distance = levenshtein.get('hello', 'hello');
-console.log('Levenshtein distance:', distance);
-window.levenshtein = levenshtein;
 window.uploadedText = -1;
-
 function cleanString(input) {
     // 使用正则表达式去除字符串中的换行符
     input = input.replace(/[\r\n]+/g, ' ');
     // 简化多个连续空格为一个空格
     return input.replace(/\s+/g, ' ');
 }
-
 document.getElementById('fileInput').addEventListener('change', function() {
     var selectedFile = this.files[0];
     var selectedFileName = document.getElementById('selectedFileName');
@@ -45,11 +36,12 @@ document.getElementById('textInputFile').addEventListener('change', function() {
         reader.readAsText(file);
     }
 });
-document.getElementById('textInput').addEventListener('input', function() {
-    var textInput = document.getElementById("textInput");
-    textInput.style.height = "auto";
-    textInput.style.height = textInput.scrollHeight + 'px';
+function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
 
+document.getElementById('textInput').addEventListener('input', function() {
     if (window.uploadedText == -1) {
         document.getElementById('accuracyDisplay').textContent = "Please Upload Text File";
         return;
@@ -59,17 +51,6 @@ document.getElementById('textInput').addEventListener('input', function() {
     document.getElementById('accuracyDisplay').textContent = `Accuracy: ${accuracy}%`;
 });
 
-document.getElementById('compareText').addEventListener('click', function() {
-    if (window.uploadedText == -1) {
-        document.getElementById('accuracyDisplay').textContent = "Please Upload Text File";
-        return;
-    }
-    //document.getElementById("compareContainer").style.display = "block";
-
-    let userInput = cleanString(document.getElementById("textInput").value);
-    //document.getElementById("originalTextDisplay").textContent = window.uploadedText
-    displayDifferences(userInput, window.uploadedText);
-});
 function calculateMatchPercentage(s1, s2) {
     var distance = window.levenshtein.get(s1, s2);
     var maxLength = Math.max(s1.length, s2.length);
@@ -77,23 +58,14 @@ function calculateMatchPercentage(s1, s2) {
     var percentage = (1 - distance / maxLength) * 100;
     return Math.floor(percentage); // 直接截断小数部分
 }
-
-function displayDifferences(text1, text2) {
-    const diffs = dmp.diff_main(text1, text2);
-    dmp.diff_cleanupSemantic(diffs);  // Optional cleanup to make the differences more readable
-
-    const display = diffs.map(([operation, segment]) => {
-        if (operation === 1) { // Insertion
-            return `<span class="insert">${segment}</span>`;
-        } else if (operation === -1) { // Deletion
-            return `<span class="delete">${segment}</span>`;
-        } else { // No change
-            return `<span class="equal">${segment}</span>`;
+function calculateAccuracy(originalText, userInput) {
+    var totalCharacters = originalText.length;
+    var matchCount = 0;
+    for (var i = 0; i < userInput.length && i < originalText.length;
+        i++) {
+        if (userInput[i] === originalText[i]) {
+            matchCount++;
         }
-    }).join('');
-
-    document.getElementById('differenceOutput').innerHTML = display;
-}
-
-function compareTexts() {
+    }
+    return (matchCount / totalCharacters * 100).toFixed(2);
 }
