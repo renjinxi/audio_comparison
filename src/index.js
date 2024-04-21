@@ -9,7 +9,8 @@ window.uploadedText = -1;
 
 function cleanString(input) {
     // 使用正则表达式去除字符串中的换行符
-    input = input.replace(/[\r\n]+/g, ' ');
+    input = input.trim();
+     input = input.replace(/[\r\n]+/g, ' ');
     // 简化多个连续空格为一个空格
     return input.replace(/\s+/g, ' ');
 }
