@@ -10,7 +10,7 @@ window.uploadedText = -1;
 function cleanString(input) {
     // 使用正则表达式去除字符串中的换行符
     input = input.trim();
-     input = input.replace(/[\r\n]+/g, ' ');
+    input = input.replace(/[\r\n]+/g, ' ');
     // 简化多个连续空格为一个空格
     return input.replace(/\s+/g, ' ');
 }
@@ -26,10 +26,19 @@ document.getElementById('fileInput').addEventListener('change', function() {
         var audioSource = document.getElementById('audioSource');
         audioSource.src = audioURL;
         audioPlayer.load(); // 加载新的音频文件
-        audioPlayer.play().catch(e => console.error('Error playing audio:', e)); // 尝试播放音频文件
+        //audioPlayer.play().catch(e => console.error('Error playing audio:', e)); // 尝试播放音频文件
     }
 });
 
+document.getElementById('readyGo').addEventListener('click', function() {
+    var audioPlayer = document.getElementById('audioPlayer');
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+    } else {
+        audioPlayer.pause();
+        //audioPlayer.currentTime = 0;  // Optionally, reset the audio to the start
+    }
+});
 
 document.getElementById('textInputFile').addEventListener('change', function() {
     var file = this.files[0];
