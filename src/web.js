@@ -1,11 +1,3 @@
-import levenshtein from 'fast-levenshtein';
-import diff_match_patch from "diff-match-patch"
-import axios from "axios"
-
-window.axios = axios
-
-const dmp = new diff_match_patch();
-
 const CryptoJS = require('crypto-js')
 
 // 系统配置
@@ -118,9 +110,7 @@ class RequestApi {
         if (file) {
             options = {
                 method: 'POST',
-                //uri: config.hostUrl + apiName,
-                url: "/" + apiName,
-                baseUrl: config.hostUrl,
+                uri: config.hostUrl + apiName,
                 formData: {
                     ...data,
                     content: file
@@ -133,8 +123,7 @@ class RequestApi {
         } else {
             options = {
                 method: 'POST',
-                url: "/" + apiName,
-                baseUrl: config.hostUrl,
+                uri: config.hostUrl + apiName,
                 form: data,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -143,19 +132,18 @@ class RequestApi {
         }
 
         try {
-            window.a = options
-            let res = await axios(options)
+            let res = await rp(options)
             res = JSON.parse(res)
 
             if (res.ok == 0) {
                 console.log(apiName + ' success ' + JSON.stringify(res))
             } else {
-                console.log(apiName + ' error ' + JSON.stringify(res))
+                console.error(apiName + ' error ' + JSON.stringify(res))
             }
 
             return res
         } catch (err) {
-            console.log(apiName + ' error' + err)
+            console.error(apiName + ' error' + err)
         }
     }
 
@@ -254,7 +242,7 @@ class RequestApi {
             await this.getProgressRequest(taskId)
             return await this.getResultRequest(taskId)
         } catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 
@@ -277,131 +265,4 @@ function file_to_text(file) {
     config.file = file
     let ra = new RequestApi(config)
     return ra.allApiRequest()
-}
-
-const audioData = new Uint8Array([0x52, 0x49, 0x46, 0x46, 0x24, 0x08, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20]);
-
-////// 将音频数据转换为Blob对象
-const blob = new Blob([audioData], { type: 'audio/wav' });
-
-////// 创建一个File对象
-const file = new File([blob], 'audio.wav', { type: 'audio/wav' });
-console.log(file_to_text(file))
-////config.file = file
-////console.log(file)
-
-
-
-
-
-
-
-
-
-
-
-const distance = levenshtein.get('hello', 'hello');
-console.log('Levenshtein distance:', distance);
-window.levenshtein = levenshtein;
-window.uploadedText = -1;
-
-function cleanString(input) {
-    // 使用正则表达式去除字符串中的换行符
-    input = input.trim();
-    input = input.replace(/[\r\n]+/g, ' ');
-    // 简化多个连续空格为一个空格
-    return input.replace(/\s+/g, ' ');
-}
-
-document.getElementById('fileInput').addEventListener('change', function() {
-    var selectedFile = this.files[0];
-    var selectedFileName = document.getElementById('selectedFileName');
-    selectedFileName.textContent = selectedFile ? `File: ${selectedFile.name}` : '';
-
-    if (selectedFile) {
-        var audioURL = URL.createObjectURL(selectedFile);
-        var audioPlayer = document.getElementById('audioPlayer');
-        var audioSource = document.getElementById('audioSource');
-        audioSource.src = audioURL;
-        audioPlayer.load(); // 加载新的音频文件
-        //audioPlayer.play().catch(e => console.error('Error playing audio:', e)); // 尝试播放音频文件
-    }
-});
-
-document.getElementById('readyGo').addEventListener('click', function() {
-    var audioPlayer = document.getElementById('audioPlayer');
-    if (audioPlayer.paused) {
-        audioPlayer.play();
-    } else {
-        audioPlayer.pause();
-        //audioPlayer.currentTime = 0;  // Optionally, reset the audio to the start
-    }
-});
-
-document.getElementById('textInputFile').addEventListener('change', function() {
-    var file = this.files[0];
-    var selectedTextFileName = document.getElementById('selectedTextFileName');
-    selectedTextFileName.textContent = file ? `File: ${file.name}` : '';
-    if (file) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            window.uploadedText = e.target.result; // Store the content in a global variable
-            window.uploadedText = cleanString(window.uploadedText);
-            document.getElementById('accuracyDisplay').textContent = "Accuracy: --%";
-
-        };
-        reader.readAsText(file);
-    }
-});
-document.getElementById('textInput').addEventListener('input', function() {
-    var textInput = document.getElementById("textInput");
-    textInput.style.height = "auto";
-    textInput.style.height = textInput.scrollHeight + 'px';
-
-    if (window.uploadedText == -1) {
-        document.getElementById('accuracyDisplay').textContent = "Please Upload Text File";
-        return;
-    }
-    let userInput = cleanString(this.value);
-    let accuracy = calculateMatchPercentage(window.uploadedText, userInput);
-    document.getElementById('accuracyDisplay').textContent = `Accuracy: ${accuracy}%`;
-});
-
-document.getElementById('compareText').addEventListener('click', function() {
-    if (window.uploadedText == -1) {
-        document.getElementById('accuracyDisplay').textContent = "Please Upload Text File";
-        return;
-    }
-    //document.getElementById("compareContainer").style.display = "block";
-
-    let userInput = cleanString(document.getElementById("textInput").value);
-    //document.getElementById("originalTextDisplay").textContent = window.uploadedText
-    displayDifferences(userInput, window.uploadedText);
-});
-function calculateMatchPercentage(s1, s2) {
-    var distance = window.levenshtein.get(s1, s2);
-    var maxLength = Math.max(s1.length, s2.length);
-    if (maxLength === 0) return 100; // 防止除以零
-    var percentage = (1 - distance / maxLength) * 100;
-    return Math.floor(percentage); // 直接截断小数部分
-}
-
-function displayDifferences(text1, text2) {
-    const diffs = dmp.diff_main(text1, text2);
-    dmp.diff_cleanupSemantic(diffs);  // Optional cleanup to make the differences more readable
-
-    const display = diffs.map(([operation, segment]) => {
-        if (operation === 1) { // Insertion
-            return `<span class="insert">${segment}</span>`;
-        } else if (operation === -1) { // Deletion
-            return `<span class="delete">${segment}</span>`;
-        } else { // No change
-            return `<span class="equal">${segment}</span>`;
-        }
-    }).join('');
-
-    document.getElementById('differenceOutput').innerHTML = display;
-}
-
-function compareTexts() {
 }
