@@ -6,8 +6,6 @@ window.axios = axios
 
 const dmp = new diff_match_patch();
 
-
-
 const distance = levenshtein.get('hello', 'hello');
 console.log('Levenshtein distance:', distance);
 window.levenshtein = levenshtein;
@@ -24,13 +22,20 @@ function cleanString(input) {
 document.addEventListener('DOMContentLoaded', (event) => {
     const input = document.getElementById('textInput');
 
+    let isSoundEnabled = false;
     // Path to the sound file
     const keySound = new Audio('sounds/typeSoft.wav'); // Make sure to replace this with your actual sound file path
 
     input.addEventListener('keypress', () => {
         // Play the sound
-        keySound.currentTime = 0; // Rewind to the start
-        keySound.play();
+        if (isSoundEnabled) {
+            keySound.currentTime = 0; // Rewind to the start
+            keySound.play();
+        }
+    });
+    toggleSoundButton.addEventListener('click', () => {
+        isSoundEnabled = !isSoundEnabled;
+        toggleSoundButton.textContent = isSoundEnabled ? 'Disable Keyboard Sound' : 'Enable Keyboard Sound';
     });
 });
 document.getElementById('fileInput').addEventListener('change', function() {
