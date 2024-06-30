@@ -101,6 +101,12 @@
             background-color: #0056b3;
         }
 
+        .custom-file-upload.disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         #selectedFileName,
         #selectedTextFileName {
             text-align: center;
@@ -191,13 +197,20 @@ elements */
         </div>
 
         <div class="file-input-wrapper">
-            <label  class="custom-file-upload" id="readyGo">Ready Go</label> 
+            <label class="custom-file-upload" id="readyGo">Ready Go</label>
         </div>
 
         <div class="file-input-wrapper">
-            <label  class="custom-file-upload" id="toggleSoundButton">Enable Keyboard Sound</label> 
+            <label class="custom-file-upload" id="toggleSoundButton">Enable Keyboard Sound</label>
         </div>
 
+        <div class="file-input-wrapper">
+            <label class="custom-file-upload" id="uploadButton">Upload and Transcribe</label>
+        </div>
+
+        <div class="file-input-wrapper">
+            <label class="custom-file-upload" id="uploadTextButton">Upload Text</label>
+        </div>
 
         <textarea id="textInput" name="text" placeholder="Enter text here" rows="5"></textarea>
         <div id="accuracyDisplay">Accuracy: --%</div>
@@ -212,12 +225,12 @@ elements */
         <div id="differenceOutput"></div>
 
         <!--<div id="compareContainer" class="text-container">-->
-            <!--<div class="text-panel" id="originalTextDisplay">-->
-                <!--<h2>Original Text</h2>-->
-            <!--</div>-->
-            <!--<div class="text-panel" id="differenceOutput">-->
-                <!--<h2>Comparison Results</h2>-->
-            <!--</div>-->
+        <!--<div class="text-panel" id="originalTextDisplay">-->
+        <!--<h2>Original Text</h2>-->
+        <!--</div>-->
+        <!--<div class="text-panel" id="differenceOutput">-->
+        <!--<h2>Comparison Results</h2>-->
+        <!--</div>-->
         <!--</div>-->
     </div>
     <script src="dist/bundle.js"></script>
