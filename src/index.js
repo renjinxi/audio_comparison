@@ -4,6 +4,7 @@ import axios from "axios"
 import base64 from "base-64"
 
 window.axios = axios
+window.base_url = "http://cyberashes.yyboxdns.com:17749/"
 
 const dmp = new diff_match_patch();
 
@@ -185,7 +186,7 @@ function createAudioTask(base64Audio, fileName) {
         };
 
         // 发起POST请求上传音频
-        axios.post('http://localhost:8888/api/audio_upload/', audioData)
+        axios.post(window.base_url + 'api/audio_upload/', audioData)
             .then(response => {
                 if (response.status === 200 && response.data.msg && response.data.msg.task_id) {
                     resolve(response.data.msg.task_id);
@@ -202,7 +203,7 @@ function createAudioTask(base64Audio, fileName) {
 function getAudioResult(taskId) {
     return new Promise((resolve, reject) => {
         function checkResult() {
-            axios.post('http://localhost:8888/api/get_result/', null, {
+            axios.post(window.base_url + 'api/get_result/', null, {
                 params: { task_id: taskId },
             })
                 .then(response => {
@@ -238,7 +239,7 @@ function createTextTask(text) {
         };
 
         // 发起POST请求上传音频
-        axios.post('http://localhost:8888/api/text_upload/', audioData)
+        axios.post(window.base_url + 'api/text_upload/', audioData)
             .then(response => {
                 if (response.status === 200 && response.data.msg && response.data.msg.task_id) {
                     resolve(response.data.msg.task_id);
@@ -255,7 +256,7 @@ function createTextTask(text) {
 function getTextResult(taskId) {
     return new Promise((resolve, reject) => {
         function checkResult() {
-            axios.post('http://localhost:8888/api/get_result/', null, {
+            axios.post(window.base_url + 'api/get_result/', null, {
                 params: { task_id: taskId },
             })
                 .then(response => {
