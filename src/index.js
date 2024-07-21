@@ -4,7 +4,7 @@ import axios from "axios"
 // import base64 from "base-64"
 
 window.axios = axios
-window.base_url = "http://cyberashes.yyboxdns.com:17749/"
+window.base_url = "https://cyberashes.yyboxdns.com:17749/"
 
 const dmp = new diff_match_patch();
 
